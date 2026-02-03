@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+📸 KaelBox — Personal Web-Based Photobox
+KaelBooth adalah aplikasi web-based photobox sederhana yang saya bangun menggunakan React.js dan Tailwind CSS. Proyek ini lahir dari keresahan pribadi: malas diajak pacar ke studio photobox di mall, jadi saya buat sendiri versinya di rumah!
 
-## Getting Started
+✨ Fitur Utama
+Live Camera Capture: Mengambil foto secara real-time langsung dari webcam.
 
-First, run the development server:
+Dynamic Frame Selection: Berbagai pilihan frame lucu dan estetik (seperti tema "Happiness").
 
-```bash
+Custom Layouts: Pengaturan slot foto yang fleksibel dengan sistem koordinat persentase.
+
+Responsive Design: Tampilan yang pas, tidak terlalu besar di desktop, dan tetap proporsional di mobile.
+
+Photo Adjustment: Fitur untuk mengatur posisi foto di dalam slot agar pas (on-progress).
+
+🛠️ Tech Stack
+Frontend: React.js
+
+Styling: Tailwind CSS
+
+Icons & UI: Lucide React / Shadcn UI (opsional)
+
+Export: html2canvas (untuk simpan hasil foto)
+
+🚀 Cara Menjalankan
+Clone repository ini
+
+Bash
+git clone https://github.com/username/kaelbooth.git
+Install dependencies
+
+Bash
+npm install
+Jalankan aplikasi
+
+Bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+💡 Cerita di Balik Proyek Ini
+Daripada menghabiskan waktu di jalan dan antre di mall cuma buat foto 4 strip, saya memutuskan untuk memanfaatkan skill full-stack saya. Dengan sedikit sentuhan CSS aspect-ratio dan manipulasi DOM, jadilah studio photobox pribadi yang bisa diakses kapan saja tanpa perlu keluar rumah.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Moral cerita: Jadilah programmer agar kamu punya alasan logis untuk tetap mager di rumah! 😂
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+👨‍💻 Developer
+Dibuat dengan ❤️ oleh KaellDev
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+TikTok: @KaellDev
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+YouTube: KaellDev
