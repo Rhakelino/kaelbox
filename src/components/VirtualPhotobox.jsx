@@ -84,12 +84,14 @@ export default function VirtualPhotobox() {
     const [showAdjuster, setShowAdjuster] = useState(false);
     const [activeSlotIndex, setActiveSlotIndex] = useState(0);
     const [selectedFilter, setSelectedFilter] = useState("none");
+    const [inputMode, setInputMode] = useState("camera"); // "camera" or "upload"
 
     // State untuk posisi slot yang bisa diatur
     const [frameConfigs, setFrameConfigs] = useState(DEFAULT_FRAME_CONFIGS);
 
     const webcamRef = useRef(null);
     const exportRef = useRef(null);
+    const fileInputRefs = useRef([null, null, null]);
 
     const videoConstraints = {
         width: 480,
@@ -154,6 +156,21 @@ export default function VirtualPhotobox() {
         setCurrentSlot(0);
         setCountdown(null);
         setIsCapturing(false);
+    }, []);
+
+    // Handle file upload for a specific slot
+    const handleFileUpload = useCallback((slotIndex, file) => {
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            setImages(prev => {
+                const newImages = [...prev];
+                newImages[slotIndex] = e.target.result;
+                return newImages;
+            });
+        };
+        reader.readAsDataURL(file);
     }, []);
 
     const downloadResult = useCallback(async () => {
@@ -305,78 +322,160 @@ export default function VirtualPhotobox() {
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start justify-center w-full max-w-[1400px] mx-auto">
             {/* Left Panel - Camera & Controls */}
             <div className="w-full lg:flex-1 flex flex-col gap-6">
-                {/* Camera Preview */}
-                <div className="relative aspect-square w-full max-w-sm mx-auto bg-navy/5 dark:bg-white/5 rounded-3xl overflow-hidden border-2 border-primary/30 shadow-2xl">
-                    <Webcam
-                        ref={webcamRef}
-                        audio={false}
-                        screenshotFormat="image/jpeg"
-                        videoConstraints={videoConstraints}
-                        onUserMedia={handleUserMedia}
-                        mirrored={true}
-                        className="absolute inset-0 w-full h-full object-cover"
-                    />
 
-                    {countdown !== null && (
-                        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-                            <div className="text-white text-9xl font-black animate-pulse drop-shadow-2xl">
-                                {countdown}
+                {/* Mode Toggle */}
+                <div className="flex bg-navy/5 dark:bg-white/5 p-1 rounded-xl max-w-sm mx-auto w-full">
+                    <button
+                        onClick={() => setInputMode("camera")}
+                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all cursor-pointer ${inputMode === "camera"
+                            ? "bg-primary text-navy shadow"
+                            : "text-navy/60 dark:text-white/60 hover:text-navy dark:hover:text-white"
+                            }`}
+                    >
+                        <span className="material-symbols-outlined text-lg">videocam</span>
+                        Kamera
+                    </button>
+                    <button
+                        onClick={() => setInputMode("upload")}
+                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold transition-all cursor-pointer ${inputMode === "upload"
+                            ? "bg-primary text-navy shadow"
+                            : "text-navy/60 dark:text-white/60 hover:text-navy dark:hover:text-white"
+                            }`}
+                    >
+                        <span className="material-symbols-outlined text-lg">upload</span>
+                        Upload
+                    </button>
+                </div>
+
+                {/* Camera Mode */}
+                {inputMode === "camera" && (
+                    <div className="relative aspect-square w-full max-w-sm mx-auto bg-navy/5 dark:bg-white/5 rounded-3xl overflow-hidden border-2 border-primary/30 shadow-2xl">
+                        <Webcam
+                            ref={webcamRef}
+                            audio={false}
+                            screenshotFormat="image/jpeg"
+                            videoConstraints={videoConstraints}
+                            onUserMedia={handleUserMedia}
+                            mirrored={true}
+                            className="absolute inset-0 w-full h-full object-cover"
+                        />
+
+                        {countdown !== null && (
+                            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                                <div className="text-white text-9xl font-black animate-pulse drop-shadow-2xl">
+                                    {countdown}
+                                </div>
+                            </div>
+                        )}
+
+                        {!cameraReady && (
+                            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-navy/80 dark:bg-background-dark/90 backdrop-blur">
+                                <span className="material-symbols-outlined text-6xl text-primary animate-pulse mb-4">
+                                    videocam
+                                </span>
+                                <p className="text-white/80 text-sm font-medium">Menunggu akses kamera...</p>
+                            </div>
+                        )}
+
+                        {isCapturing && (
+                            <div className="absolute top-4 left-4 z-10 bg-primary/90 backdrop-blur text-navy px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                                📸 Foto {currentSlot + 1} / 3
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Upload Mode */}
+                {inputMode === "upload" && (
+                    <div className="w-full max-w-sm mx-auto space-y-3">
+                        <p className="text-sm text-navy/60 dark:text-white/60 text-center mb-4">
+                            Upload 3 foto untuk mengisi frame
+                        </p>
+                        {[0, 1, 2].map((slotIndex) => (
+                            <div key={slotIndex} className="relative">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    ref={(el) => (fileInputRefs.current[slotIndex] = el)}
+                                    onChange={(e) => handleFileUpload(slotIndex, e.target.files?.[0])}
+                                    className="hidden"
+                                />
+                                <button
+                                    onClick={() => fileInputRefs.current[slotIndex]?.click()}
+                                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-dashed transition-all cursor-pointer ${images[slotIndex]
+                                        ? "border-green-500 bg-green-50 dark:bg-green-500/10"
+                                        : "border-primary/30 bg-white/50 dark:bg-white/5 hover:border-primary hover:bg-primary/5"
+                                        }`}
+                                >
+                                    {images[slotIndex] ? (
+                                        <>
+                                            <img
+                                                src={images[slotIndex]}
+                                                alt={`Foto ${slotIndex + 1}`}
+                                                className="w-16 h-16 rounded-xl object-cover"
+                                            />
+                                            <div className="flex-1 text-left">
+                                                <p className="font-bold text-green-600 dark:text-green-400">Foto {slotIndex + 1} ✓</p>
+                                                <p className="text-xs text-navy/50 dark:text-white/50">Klik untuk ganti</p>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center">
+                                                <span className="material-symbols-outlined text-2xl text-primary">add_photo_alternate</span>
+                                            </div>
+                                            <div className="flex-1 text-left">
+                                                <p className="font-bold text-navy dark:text-white">Foto {slotIndex + 1}</p>
+                                                <p className="text-xs text-navy/50 dark:text-white/50">Klik untuk upload</p>
+                                            </div>
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {/* Controls Container */}
+                <div className="bg-white/50 dark:bg-white/5 backdrop-blur-sm rounded-3xl p-6 border border-primary/10 shadow-lg">
+                    {/* Timer Selection - Only shown in camera mode */}
+                    {inputMode === "camera" && (
+                        <div className="flex flex-col gap-3 mb-6">
+                            <div className="flex items-center gap-2 text-navy/70 dark:text-white/70">
+                                <span className="material-symbols-outlined text-primary text-xl">timer</span>
+                                <span className="text-sm font-bold uppercase tracking-wider">Timer Delay</span>
+                            </div>
+                            <div className="grid grid-cols-3 gap-3">
+                                {[3, 5, 10].map((time) => (
+                                    <button
+                                        key={time}
+                                        onClick={() => setTimerDelay(time)}
+                                        disabled={isCapturing}
+                                        className={`py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer border-2 ${timerDelay === time
+                                            ? "bg-primary text-navy border-primary"
+                                            : "bg-transparent text-navy dark:text-white border-primary/20 hover:border-primary/50"
+                                            } disabled:opacity-50 disabled:cursor-not-allowed`}
+                                    >
+                                        {time}s
+                                    </button>
+                                ))}
                             </div>
                         </div>
                     )}
 
-                    {!cameraReady && (
-                        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-navy/80 dark:bg-background-dark/90 backdrop-blur">
-                            <span className="material-symbols-outlined text-6xl text-primary animate-pulse mb-4">
-                                videocam
-                            </span>
-                            <p className="text-white/80 text-sm font-medium">Menunggu akses kamera...</p>
-                        </div>
-                    )}
-
-                    {isCapturing && (
-                        <div className="absolute top-4 left-4 z-10 bg-primary/90 backdrop-blur text-navy px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">
-                            📸 Foto {currentSlot + 1} / 3
-                        </div>
-                    )}
-                </div>
-
-                {/* Controls Container */}
-                <div className="bg-white/50 dark:bg-white/5 backdrop-blur-sm rounded-3xl p-6 border border-primary/10 shadow-lg">
-                    {/* Timer Selection */}
-                    <div className="flex flex-col gap-3 mb-6">
-                        <div className="flex items-center gap-2 text-navy/70 dark:text-white/70">
-                            <span className="material-symbols-outlined text-primary text-xl">timer</span>
-                            <span className="text-sm font-bold uppercase tracking-wider">Timer Delay</span>
-                        </div>
-                        <div className="grid grid-cols-3 gap-3">
-                            {[3, 5, 10].map((time) => (
-                                <button
-                                    key={time}
-                                    onClick={() => setTimerDelay(time)}
-                                    disabled={isCapturing}
-                                    className={`py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer border-2 ${timerDelay === time
-                                        ? "bg-primary text-navy border-primary"
-                                        : "bg-transparent text-navy dark:text-white border-primary/20 hover:border-primary/50"
-                                        } disabled:opacity-50 disabled:cursor-not-allowed`}
-                                >
-                                    {time}s
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-
                     {/* Main Action Buttons */}
                     <div className="flex flex-col gap-3">
-                        <button
-                            onClick={startCaptureSequence}
-                            disabled={isCapturing || !cameraReady}
-                            className="w-full flex items-center justify-center gap-2 bg-primary text-navy py-4 rounded-2xl font-black text-lg shadow-lg shadow-primary/20 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                        >
-                            <span className="material-symbols-outlined text-2xl">photo_camera</span>
-                            {isCapturing ? "Senyum! 😄" : "Mulai Foto"}
-                        </button>
+                        {/* Camera Capture Button - Only in camera mode */}
+                        {inputMode === "camera" && (
+                            <button
+                                onClick={startCaptureSequence}
+                                disabled={isCapturing || !cameraReady}
+                                className="w-full flex items-center justify-center gap-2 bg-primary text-navy py-4 rounded-2xl font-black text-lg shadow-lg shadow-primary/20 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                            >
+                                <span className="material-symbols-outlined text-2xl">photo_camera</span>
+                                {isCapturing ? "Senyum! 😄" : "Mulai Foto"}
+                            </button>
+                        )}
 
                         {/* Photo Filter Selection */}
                         <div className="bg-white/50 dark:bg-white/5 backdrop-blur-sm rounded-2xl border border-primary/10 p-4 shadow-lg mt-6">
