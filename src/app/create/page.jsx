@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import { Camera, ArrowLeft, User, Lightbulb } from "lucide-react";
 
 // Dynamic import untuk menghindari SSR issues dengan webcam
 const VirtualPhotobox = dynamic(
@@ -12,9 +13,7 @@ const VirtualPhotobox = dynamic(
             <div className="flex items-center justify-center min-h-[500px]">
                 <div className="flex flex-col items-center gap-4">
                     <div className="size-16 rounded-full bg-primary/20 flex items-center justify-center animate-pulse">
-                        <span className="material-symbols-outlined text-primary text-3xl">
-                            photo_camera
-                        </span>
+                        <Camera className="w-8 h-8 text-primary" />
                     </div>
                     <p className="text-navy/60 dark:text-white/60 text-sm font-medium">
                         Memuat kamera...
@@ -29,15 +28,13 @@ export default function Create() {
     return (
         <div className="bg-background-light dark:bg-background-dark text-navy dark:text-white min-h-screen flex flex-col">
             {/* Top Navigation Bar */}
-            <header className="flex items-center justify-between px-6 md:px-10 py-6 border-b border-primary/20 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-[60]">
+            <header className="flex items-center justify-between px-6 md:px-10 py-6 border-b border-primary/20 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-60">
                 <div className="flex items-center gap-6">
                     <Link
                         href="/"
                         className="group flex items-center gap-2 text-navy dark:text-white hover:text-primary transition-colors"
                     >
-                        <span className="material-symbols-outlined text-[24px]">
-                            arrow_back
-                        </span>
+                        <ArrowLeft className="w-6 h-6" />
                         <span className="text-sm font-bold">Kembali</span>
                     </Link>
                     <div className="h-6 w-[1px] bg-primary/30"></div>
@@ -62,9 +59,7 @@ export default function Create() {
                     </div>
                     <div className="size-10 rounded-full bg-primary/20 border border-primary overflow-hidden">
                         <div className="w-full h-full bg-primary/30 flex items-center justify-center">
-                            <span className="material-symbols-outlined text-primary">
-                                person
-                            </span>
+                            <User className="w-5 h-5 text-primary" />
                         </div>
                     </div>
                 </div>
@@ -75,9 +70,7 @@ export default function Create() {
                 <div className="mb-8 bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 rounded-2xl p-6">
                     <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
                         <div className="size-12 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                            <span className="material-symbols-outlined text-primary text-2xl">
-                                tips_and_updates
-                            </span>
+                            <Lightbulb className="w-6 h-6 text-primary" />
                         </div>
                         <div>
                             <h2 className="font-bold text-lg mb-1">Cara Menggunakan</h2>

@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import Webcam from "react-webcam";
+import { Video, Upload, ImagePlus, Timer, Camera, Sparkles, Sliders, ChevronDown, RotateCcw, Download } from "lucide-react";
 
 // Photo filter configurations
 const PHOTO_FILTERS = {
@@ -332,7 +333,7 @@ export default function VirtualPhotobox() {
                             : "text-navy/60 dark:text-white/60 hover:text-navy dark:hover:text-white"
                             }`}
                     >
-                        <span className="material-symbols-outlined text-lg">videocam</span>
+                        <Video className="w-5 h-5" />
                         Kamera
                     </button>
                     <button
@@ -342,7 +343,7 @@ export default function VirtualPhotobox() {
                             : "text-navy/60 dark:text-white/60 hover:text-navy dark:hover:text-white"
                             }`}
                     >
-                        <span className="material-symbols-outlined text-lg">upload</span>
+                        <Upload className="w-5 h-5" />
                         Upload
                     </button>
                 </div>
@@ -370,9 +371,7 @@ export default function VirtualPhotobox() {
 
                         {!cameraReady && (
                             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-navy/80 dark:bg-background-dark/90 backdrop-blur">
-                                <span className="material-symbols-outlined text-6xl text-primary animate-pulse mb-4">
-                                    videocam
-                                </span>
+                                <Video className="w-16 h-16 text-primary animate-pulse mb-4" />
                                 <p className="text-white/80 text-sm font-medium">Menunggu akses kamera...</p>
                             </div>
                         )}
@@ -422,7 +421,7 @@ export default function VirtualPhotobox() {
                                     ) : (
                                         <>
                                             <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center">
-                                                <span className="material-symbols-outlined text-2xl text-primary">add_photo_alternate</span>
+                                                <ImagePlus className="w-8 h-8 text-primary" />
                                             </div>
                                             <div className="flex-1 text-left">
                                                 <p className="font-bold text-navy dark:text-white">Foto {slotIndex + 1}</p>
@@ -442,7 +441,7 @@ export default function VirtualPhotobox() {
                     {inputMode === "camera" && (
                         <div className="flex flex-col gap-3 mb-6">
                             <div className="flex items-center gap-2 text-navy/70 dark:text-white/70">
-                                <span className="material-symbols-outlined text-primary text-xl">timer</span>
+                                <Timer className="w-5 h-5 text-primary" />
                                 <span className="text-sm font-bold uppercase tracking-wider">Timer Delay</span>
                             </div>
                             <div className="grid grid-cols-3 gap-3">
@@ -472,7 +471,7 @@ export default function VirtualPhotobox() {
                                 disabled={isCapturing || !cameraReady}
                                 className="w-full flex items-center justify-center gap-2 bg-primary text-navy py-4 rounded-2xl font-black text-lg shadow-lg shadow-primary/20 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                             >
-                                <span className="material-symbols-outlined text-2xl">photo_camera</span>
+                                <Camera className="w-6 h-6" />
                                 {isCapturing ? "Senyum! 😄" : "Mulai Foto"}
                             </button>
                         )}
@@ -480,7 +479,7 @@ export default function VirtualPhotobox() {
                         {/* Photo Filter Selection */}
                         <div className="bg-white/50 dark:bg-white/5 backdrop-blur-sm rounded-2xl border border-primary/10 p-4 shadow-lg mt-6">
                             <div className="flex items-center gap-2 mb-3">
-                                <span className="material-symbols-outlined text-primary text-xl">auto_awesome</span>
+                                <Sparkles className="w-5 h-5 text-primary" />
                                 <span className="font-bold text-sm text-navy dark:text-white uppercase tracking-wider">Filter Foto</span>
                             </div>
                             <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
@@ -508,12 +507,10 @@ export default function VirtualPhotobox() {
                                 className="w-full flex items-center justify-between p-4 hover:bg-primary/5 transition-colors cursor-pointer"
                             >
                                 <div className="flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-primary">tune</span>
+                                    <Sliders className="w-5 h-5 text-primary" />
                                     <span className="font-bold text-sm text-navy dark:text-white uppercase tracking-wider">Atur Posisi Foto</span>
                                 </div>
-                                <span className={`material-symbols-outlined transition-transform duration-300 text-navy/70 dark:text-white/70 ${showAdjuster ? 'rotate-180' : ''}`}>
-                                    expand_more
-                                </span>
+                                <ChevronDown className={`w-5 h-5 transition-transform duration-300 text-navy/70 dark:text-white/70 ${showAdjuster ? 'rotate-180' : ''}`} />
                             </button>
 
                             {/* Collapsible Content */}
@@ -624,14 +621,14 @@ export default function VirtualPhotobox() {
                                     onClick={resetPhotos}
                                     className="flex items-center justify-center gap-2 bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 py-3 rounded-xl font-bold hover:bg-red-200 dark:hover:bg-red-500/30 transition-colors cursor-pointer"
                                 >
-                                    <span className="material-symbols-outlined">restart_alt</span>
+                                    <RotateCcw className="w-5 h-5" />
                                     Ulang
                                 </button>
                                 <button
                                     onClick={downloadResult}
                                     className="flex items-center justify-center gap-2 bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 py-3 rounded-xl font-bold hover:bg-green-200 dark:hover:bg-green-500/30 transition-colors cursor-pointer"
                                 >
-                                    <span className="material-symbols-outlined">download_for_offline</span>
+                                    <Download className="w-5 h-5" />
                                     Simpan
                                 </button>
                             </div>
