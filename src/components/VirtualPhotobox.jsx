@@ -3,6 +3,18 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import Webcam from "react-webcam";
 
+// Photo filter configurations
+const PHOTO_FILTERS = {
+    none: { name: "Normal", css: "none", icon: "🔳" },
+    grayscale: { name: "B&W", css: "grayscale(100%)", icon: "⬛" },
+    sepia: { name: "Sepia", css: "sepia(80%)", icon: "🟫" },
+    vintage: { name: "Vintage", css: "sepia(40%) contrast(90%) brightness(90%)", icon: "📷" },
+    warm: { name: "Warm", css: "sepia(30%) saturate(120%) brightness(105%)", icon: "🌅" },
+    cool: { name: "Cool", css: "saturate(80%) brightness(105%) hue-rotate(10deg)", icon: "❄️" },
+    vivid: { name: "Vivid", css: "saturate(150%) contrast(110%)", icon: "🌈" },
+    fade: { name: "Fade", css: "contrast(90%) brightness(110%) saturate(80%)", icon: "🌫️" },
+};
+
 // Default frame configurations
 const DEFAULT_FRAME_CONFIGS = {
     "/frame 1.png": {
@@ -71,6 +83,7 @@ export default function VirtualPhotobox() {
     const [timerDelay, setTimerDelay] = useState(3);
     const [showAdjuster, setShowAdjuster] = useState(false);
     const [activeSlotIndex, setActiveSlotIndex] = useState(0);
+    const [selectedFilter, setSelectedFilter] = useState("none");
 
     // State untuk posisi slot yang bisa diatur
     const [frameConfigs, setFrameConfigs] = useState(DEFAULT_FRAME_CONFIGS);
@@ -171,6 +184,10 @@ export default function VirtualPhotobox() {
                 });
             };
 
+            // Terapkan filter ke canvas context
+            const filterCSS = PHOTO_FILTERS[selectedFilter].css;
+            ctx.filter = filterCSS === "none" ? "none" : filterCSS;
+
             // 1. Gambar foto-foto terlebih dahulu (layer bawah)
             for (let i = 0; i < frameConfig.slots.length; i++) {
                 const slot = frameConfig.slots[i];
@@ -208,6 +225,8 @@ export default function VirtualPhotobox() {
                 }
             }
 
+            // Reset filter sebelum gambar frame
+            ctx.filter = "none";
 
             // 2. Gambar frame di atas (layer atas)
             const frameImg = await loadImage(selectedFrame);
@@ -248,7 +267,7 @@ export default function VirtualPhotobox() {
             console.error("Error exporting image:", error);
             alert("Gagal mengexport gambar. Pastikan foto sudah lengkap.");
         }
-    }, [images, selectedFrame, frameConfigs]);
+    }, [images, selectedFrame, frameConfigs, selectedFilter]);
 
     // Handler untuk update posisi slot
     const updateSlotPosition = useCallback(
@@ -359,8 +378,31 @@ export default function VirtualPhotobox() {
                             {isCapturing ? "Senyum! 😄" : "Mulai Foto"}
                         </button>
 
+                        {/* Photo Filter Selection */}
+                        <div className="bg-white/50 dark:bg-white/5 backdrop-blur-sm rounded-2xl border border-primary/10 p-4 shadow-lg mt-6">
+                            <div className="flex items-center gap-2 mb-3">
+                                <span className="material-symbols-outlined text-primary text-xl">auto_awesome</span>
+                                <span className="font-bold text-sm text-navy dark:text-white uppercase tracking-wider">Filter Foto</span>
+                            </div>
+                            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+                                {Object.entries(PHOTO_FILTERS).map(([key, filter]) => (
+                                    <button
+                                        key={key}
+                                        onClick={() => setSelectedFilter(key)}
+                                        className={`shrink-0 flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all cursor-pointer ${selectedFilter === key
+                                            ? "bg-primary text-navy"
+                                            : "bg-navy/5 dark:bg-white/5 hover:bg-primary/20"
+                                            }`}
+                                    >
+                                        <span className="text-lg">{filter.icon}</span>
+                                        <span className="text-[10px] font-bold uppercase">{filter.name}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
                         {/* Controls Panel - Detached */}
-                        <div className="bg-white/50 dark:bg-white/5 backdrop-blur-sm rounded-2xl border border-primary/10 overflow-hidden shadow-lg mt-6">
+                        <div className="bg-white/50 dark:bg-white/5 backdrop-blur-sm rounded-2xl border border-primary/10 overflow-hidden shadow-lg mt-4">
                             {/* Toggle Header */}
                             <button
                                 onClick={() => setShowAdjuster(!showAdjuster)}
@@ -557,6 +599,7 @@ export default function VirtualPhotobox() {
                                         src={images[index]}
                                         alt={`Photo ${index + 1}`}
                                         className="w-full h-full object-cover"
+                                        style={{ filter: PHOTO_FILTERS[selectedFilter].css }}
                                     />
                                 ) : (
                                     <div
