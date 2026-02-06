@@ -58,13 +58,22 @@ const DEFAULT_FRAME_CONFIGS = {
         name: "Frame 5",
         aspectRatio: "591/1772",
         slots: [
-            { top: 13.8, left: 8.8, width: 85, height: 26 },
-            { top: 40.4, left: 8.8, width: 85, height: 26 },
-            { top: 66.4, left: 8.8, width: 85, height: 26 },
+            { top: 4.0, left: 8.8, width: 85.6, height: 26.6 },
+            { top: 30.5, left: 8.8, width: 85.6, height: 28.2  },
+            { top: 58.0, left: 8.8, width: 85.6, height: 32.6 },
         ],
     },
     "/frame 6.png": {
         name: "Frame 6",
+        aspectRatio: "591/1772",
+        slots: [
+            { top: 3.3, left: 12, width: 76, height: 26 },
+            { top: 31.6, left: 12, width: 76, height: 26 },
+            { top: 59.9, left: 12, width: 76, height: 26 },
+        ],
+    },
+    "/frame 7.png": {
+        name: "Frame 7",
         aspectRatio: "591/1772",
         slots: [
             { top: 3.3, left: 12, width: 76, height: 26 },
